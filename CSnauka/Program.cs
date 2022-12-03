@@ -10,3 +10,4 @@ tree.Insert(20);
 tree.Insert(170);
 tree.Insert(15);
 tree.Insert(1);
+Console.WriteLine(tree.Lookup(16));
