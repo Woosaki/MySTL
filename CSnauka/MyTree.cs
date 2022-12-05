@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -106,39 +107,60 @@ namespace MySTL
                 //Found a match!
                 else if(value == currentNode.Value)
                 {
-                    //1. Our match has no right child
-                    if (currentNode.Right == null)
+                    //1. Our match is a leaf
+                    if (currentNode.Right == null && currentNode.Left == null)
                     {
                         //Our match is a Root
                         if (parentNode == null)
-                            Root = currentNode.Left;
+                            Root = null;
                         else
                         {
                             if (parentNode.Value > currentNode.Value)
-                                parentNode.Left = currentNode.Left;
+                                parentNode.Left = null;
                             else if(parentNode.Value < currentNode.Value)
-                                parentNode.Right = currentNode.Left;
+                                parentNode.Right = null;
                         }
                     }
-                    //2. Our match's right child doesn't have a left child
-                    else if(currentNode.Right.Left == null)
+                    //2. Our match has one child
+                    else if(currentNode.Right == null || currentNode.Left == null)
                     {
                         //Our match is a Root
-                        if (parentNode == null)
+                        if (parentNode == null && currentNode.Left == null)
+                            Root = currentNode.Right;
+                        else if(parentNode == null && currentNode.Right == null)
                             Root = currentNode.Left;
-                        else
+                        else if(currentNode.Left == null)
                         {
                             if (parentNode.Value > currentNode.Value)
                                 parentNode.Left = currentNode.Right;
                             else if (parentNode.Value < currentNode.Value)
                                 parentNode.Right = currentNode.Right;
                         }
+                        else if (currentNode.Right == null)
+                        {
+                            if (parentNode.Value > currentNode.Value)
+                                parentNode.Left = currentNode.Left;
+                            else if (parentNode.Value < currentNode.Value)
+                                parentNode.Right = currentNode.Left;
+                        }
                     }
-                    //3. Our match's right child has a left child
+                    //3. Our match has two children
+                    //  Find left-most child of right child
+                    //HAS TO DEBUG IT AND FIX! (NOT WORKING)
                     else
                     {
-                        //TODO
+                        TreeNode leftMost = currentNode.Right;
+                        TreeNode leftMostParent = currentNode;
+                        while (leftMost.Left != null)
+                        {
+                            leftMostParent = leftMost;
+                            leftMost = leftMost.Left;
+                        }
+                        leftMostParent.Left = leftMost.Right;
+                        leftMost.Right = leftMostParent;
+                        leftMost.Left = currentNode.Left;
                     }
+                    currentNode = null;
                 }
             }
         }
